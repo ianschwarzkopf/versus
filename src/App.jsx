@@ -18,6 +18,8 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="callback" element={<Callback />} />
         <Route path="home" element={<Home />} />
+        <Route path="/search/:query" element={<SearchResults />} />
+        <Route path="/artist/:id" element={<ArtistAlbums />} />
       </Route>
     </Routes>
   )

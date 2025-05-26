@@ -1,47 +1,27 @@
-import { useState } from 'react';
+import { useState, useNavigate } from 'react';
 import styles from './ArtistSearch.module.css'
 
 export default function ArtistSearch({ token }) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const navigate = useNavigate();
 
-  const searchArtists = async () => {
-    if (!query) return;
-
-    const res = await fetch(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-        query
-      )}&type=artist&limit=5`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = await res.json();
-    setResults(data.artists?.items || []);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    navigate(`/search/${encodeURIComponent(query.trim())}`);
   };
 
   return (
-    <>
     <div className={styles.search_container}>
-      <input
-        type="text"
-        placeholder="Search for an artist"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button onClick={searchArtists}>Search</button>
-      </div>
-      <ul>
-        {results.map((artist) => (
-          <li key={artist.id}>
-            <img src={artist.images[0]?.url} alt="" width={40} />
-            {artist.name}
-          </li>
-        ))}
-      </ul>
-    </>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={query}
+          placeholder="Search for an artist..."
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+    </div>
   );
 }
