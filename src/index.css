@@ -1,0 +1,60 @@
+:root {
+  font-family: "Plus Jakarta Sans", Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1;
+  font-weight: 800;
+
+  color: var(--text);
+  background-color: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --text: #FFFBFF;
+  --bg: #111111;
+  --sub: #9d9c9c;
+  --pri: #26E368;
+  --sec: #E86A92;
+  --thi: #725AC1;
+
+
+}
+
+a {
+  font-weight: 800;
+  color: var(--text);
+  text-decoration: none;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 1;
+}
+
+button {
+  border-radius: 1rem;
+  border: 2px solid var(--pri);
+  padding: 12px 24px;
+  min-width: 7rem;
+  font-family: "Plus Jakarta Sans";
+  font-size: 1rem;
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--pri);
+  font-weight: 800;
+}
+
+button:hover {
+  background-color: var(--pri);
+  color: var(--bg);
+}

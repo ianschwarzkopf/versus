@@ -1,0 +1,87 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--bg);
+  width: 100%;
+  max-width: 75rem;
+}
+
+.logo {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo img {
+  height: 4rem;
+}
+
+.navLinks {
+  display: flex;
+  gap: 3rem;
+}
+
+button.vip {
+  border: 2px solid var(--thi);
+  color: var(--thi);
+}
+
+button.vip:hover {
+  background-color: var(--thi);
+  color: var(--bg);
+}
+
+.navLinks a:hover {
+  color: var(--pri);
+}
+
+.mainContent {
+  flex: 1;
+}
+
+.footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 14px;
+}
+
+@media only screen and (max-width: 75rem) {
+  .navbar {
+    max-width: 85vw;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .navbar {
+
+  }
+  .logo img {
+    height: 2rem;
+  }
+  button {
+    min-width: 4rem;
+    font-size: .75rem;
+    padding: 6px 12px;
+  }
+  .logo {
+    font-size: 1.5rem;
+  }
+  .navLinks {
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,103 @@
+.landing {
+  padding: 2rem;
+  max-width: 75rem;
+  margin: auto;
+}
+
+.hero {
+  text-align: left;
+  display: grid;
+  grid-template-columns: 2fr 4fr;
+  margin-bottom: 4rem;
+  gap: 4rem;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.hero_left {
+  margin: auto;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: var(--sub);
+  margin-bottom: 32px;
+}
+
+.photo {
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.photo:hover {
+  transform: scale(1.1);
+}
+
+.features {
+  text-align: left;
+  display: grid;
+  grid-template-columns: 4fr 3fr;
+  margin-bottom: 4rem;
+  gap: 4rem;
+  margin-bottom: 60px;
+}
+
+.features h2 {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.featureList {
+  list-style: disc;
+  padding-left: 20px;
+  font-size: 18px;
+  color: var(--sub);
+  margin-bottom: 32px;
+}
+
+.featureList li {
+  margin-bottom: 1rem;
+}
+
+.vip {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 1rem;
+  border: 2px solid var(--thi);
+  padding: 2rem 2rem;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.vip:hover {
+  transform: scale(1.02);
+}
+
+.vip h2 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  color: var(--thi);
+}
+
+.vip p {
+  font-size: 1rem;
+  color: var(--thi);
+  margin-bottom: 4rem;
+}
+
+.vipfull {
+  background-color: var(--bg);
+}
+
+@media only screen and (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
