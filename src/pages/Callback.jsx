@@ -10,10 +10,10 @@ export default function Callback() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
     const verifier = localStorage.getItem("verifier");
-    console.log('Body:', req.body);
 
     if (!code || !verifier) {
-      return res.status(400).json({ error: 'Missing code or verifier', received: req.body });
+      console.error('Missing code or verifier');
+      return;
     }
 
     fetch('/api/callback', {
@@ -25,7 +25,13 @@ export default function Callback() {
       .then(data => {
         if (data.success) {
           navigate('/home');
+        } else {
+          console.error('Callback error:', data.error);
+          // Optionally show an error message to user here
         }
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
       });
   }, []);
 
