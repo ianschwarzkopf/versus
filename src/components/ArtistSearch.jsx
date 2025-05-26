@@ -19,7 +19,6 @@ export default function ArtistSearch({ token }) {
       }
     );
 
-    const searchResult =
     const data = await res.json();
     setResults(data.artists?.items || []);
   };
