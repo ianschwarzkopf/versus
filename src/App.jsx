@@ -13,9 +13,8 @@ function App() {
 
   return (
     <Routes>
-
+      <Route index element={<LandingPage />} />
       <Route path="/" element={<Layout />}>
-        <Route index element={<LandingPage />} />
         <Route path="login" element={<Login />} />
         <Route path="callback" element={<Callback />} />
         <Route path="home" element={<Home />} />
