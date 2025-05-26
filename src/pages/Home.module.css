@@ -2,4 +2,7 @@
   padding: 2rem;
   max-width: 75rem;
   margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

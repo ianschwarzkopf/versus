@@ -19,11 +19,13 @@ export default function ArtistSearch({ token }) {
       }
     );
 
+    const searchResult =
     const data = await res.json();
     setResults(data.artists?.items || []);
   };
 
   return (
+    <>
     <div className={styles.search_container}>
       <input
         type="text"
@@ -32,7 +34,7 @@ export default function ArtistSearch({ token }) {
         onChange={(e) => setQuery(e.target.value)}
       />
       <button onClick={searchArtists}>Search</button>
-
+      </div>
       <ul>
         {results.map((artist) => (
           <li key={artist.id}>
@@ -41,6 +43,6 @@ export default function ArtistSearch({ token }) {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }
