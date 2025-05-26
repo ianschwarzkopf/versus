@@ -17,12 +17,6 @@ export default function Callback() {
       }
 
       if (session?.provider_token) {
-        console.log('✅ Logged in with Spotify token:', session.provider_token);
-
-        // Optional: Store it somewhere if you're not using Supabase server API helpers
-        // localStorage.setItem("spotify_token", session.provider_token);
-
-        // Redirect to home or wherever you want
         navigate('/home');
       } else {
         console.warn("⚠️ No Spotify token found in session");

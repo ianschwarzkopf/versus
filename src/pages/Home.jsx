@@ -1,41 +1,82 @@
-import React, { useState } from 'react';
+// pages/Home.jsx
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import axios from 'axios';
+import { useUser } from '../lib/useUser';
+
+import ArtistSearch from '../components/ArtistSearch';
 
 export default function Home() {
-  const [playlists, setPlaylists] = useState([]);
+  const user = useUser();
 
-  const fetchPlaylists = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.provider_token;
+  const [spotifyToken, setSpotifyToken] = useState(null);
 
-      if (!token) {
-        console.error("No Spotify token found");
-        return;
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSpotifyToken(session?.provider_token);
+    });
+  }, []);
+
+  useEffect(() => {
+    async function createUserIfNotExists() {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id);
+
+      if (data.length === 0) {
+        const { user_metadata } = user;
+        await supabase.from('users').insert({
+          id: user.id,
+          email: user.email,
+          full_name: user_metadata?.full_name || user.user_metadata?.name,
+          avatar_url: user_metadata?.avatar_url || user.user_metadata?.picture,
+        });
       }
+    }
 
-      const res = await axios.get('/api/playlists', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    createUserIfNotExists();
+  }, [user]);
 
-      setPlaylists(res.data.items || []);
-    } catch (err) {
-      console.error('Error fetching playlists', err);
+  useEffect(() => {
+  const saveSpotifyTokens = async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      console.error('Error getting session:', error);
+      return;
+    }
+
+    const session = data.session;
+    const userId = session?.user?.id;
+    const accessToken = session?.provider_token;
+    const refreshToken = session?.provider_refresh_token;
+
+    if (userId && accessToken && refreshToken) {
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          spotify_access_token: accessToken,
+          spotify_refresh_token: refreshToken,
+        })
+        .eq('id', userId);
+
+      if (updateError) {
+        console.error('Error saving tokens:', updateError);
+      } else {
+        console.log('Spotify tokens saved!');
+      }
     }
   };
 
+  saveSpotifyTokens();
+}, []);
+
+
   return (
     <div>
-      <h1>Your Playlists</h1>
-      <button onClick={fetchPlaylists}>Get My Playlists</button>
-      <ul>
-        {playlists.map((pl) => (
-          <li key={pl.id}>{pl.name}</li>
-        ))}
-      </ul>
+      <h1>Welcome to the app!</h1>
+      {spotifyToken && <ArtistSearch token={spotifyToken} />}
     </div>
   );
 }
