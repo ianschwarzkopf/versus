@@ -7,7 +7,7 @@ export default function Login() {
 
     localStorage.setItem('verifier', verifier);
 
-    window.location.href = `http://localhost:3000/api/auth?challenge=${challenge}`; // Your local backend
+    window.location.href = `https://versus-plum.vercel.app/api/auth?challenge=${challenge}`; // Your local backend
   };
 
   return <button onClick={handleLogin}>Login with Spotify</button>;
