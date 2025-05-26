@@ -6,7 +6,7 @@ import { Outlet, Link } from "react-router-dom";
 
 import VersusCards from '/versus_cards.png'
 
-import Login from './login'
+import Login from './Login'
 
 export default function LandingPage() {
   return (
