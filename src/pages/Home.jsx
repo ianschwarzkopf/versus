@@ -1,43 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import styles from './Home.module.css';
-import Logo from '/versus_logo_fit.svg';
-import { Outlet, Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { supabase } from './lib/supabase';
 import axios from 'axios';
 
 export default function Home() {
-  const [userPlaylists, setUserPlaylists] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
 
-  const findUserPlaylists = async () => {
+  const fetchPlaylists = async () => {
     try {
-      const { data } = await axios.get("/api/playlists");
-      setUserPlaylists(data.items || []);
-    } catch (error) {
-      console.error("Error fetching playlists:", error);
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.provider_token;
+
+      if (!token) {
+        console.error("No Spotify token found");
+        return;
+      }
+
+      const res = await axios.get('/api/playlists', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setPlaylists(res.data.items || []);
+    } catch (err) {
+      console.error('Error fetching playlists', err);
     }
   };
 
   return (
     <div>
-      <h1>Home</h1>
-      <button onClick={findUserPlaylists}>Get My Playlists</button>
-      <div className={styles.albumsWrapper}>
-        {userPlaylists.map(playlist => (
-          <div className={styles.albumsContainer} key={playlist.id}>
-            <h3>{playlist.name}</h3>
-            {playlist.images?.length ? (
-              <Link to="/ViewRankSongs" className={styles.Link}>
-                <button onClick={() => findPlaylistTracks(playlist.id)}>
-                  <img className={styles.artistImg} width="100%" src={playlist.images[0].url} alt="" />
-                </button>
-              </Link>
-            ) : (
-              <Link to="/ViewRankSongs" className={styles.Link}>
-                <button><img className={styles.artistImg} width="100%" alt="" /></button>
-              </Link>
-            )}
-          </div>
+      <h1>Your Playlists</h1>
+      <button onClick={fetchPlaylists}>Get My Playlists</button>
+      <ul>
+        {playlists.map((pl) => (
+          <li key={pl.id}>{pl.name}</li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

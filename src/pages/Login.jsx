@@ -1,16 +1,15 @@
-import { generateCodeVerifier, generateCodeChallenge } from '../auth/auth'; // your PKCE utils
+import { supabase } from './lib/supabase';
 
 export default function Login() {
-  const handleLogin = async () => {
-  const verifier = generateCodeVerifier();
-  const challenge = await generateCodeChallenge(verifier);
+  const signInWithSpotify = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'spotify',
+      options: {
+      redirectTo: `${window.location.origin}/callback`,
+    },
+    });
+  };
 
-  localStorage.setItem('code_verifier', verifier);
 
-  // Notice `code_challenge` here
-  window.location.href = `https://versus-plum.vercel.app/api/auth?code_challenge=${challenge}`;
-};
-
-
-  return <button onClick={handleLogin}>Login with Spotify</button>;
+  return <button onClick={signInWithSpotify}>Login with Spotify</button>;
 }
