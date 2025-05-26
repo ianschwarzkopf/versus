@@ -1,4 +1,6 @@
-import { useState, useNavigate } from 'react';
+import { useState} from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import styles from './ArtistSearch.module.css'
 
 export default function ArtistSearch({ token }) {
