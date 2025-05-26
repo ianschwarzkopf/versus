@@ -1,31 +1,41 @@
-// api/callback.js
+import fetch from "node-fetch";
+
 export default async function handler(req, res) {
-  const { code, verifier } = req.body;
+  const client_id = process.env.CLIENT_ID;
+  const redirect_uri = process.env.REDIRECT_URI;
+
+  const { code, state, code_verifier } = req.query;
+
+  if (!code || !code_verifier) {
+    return res.status(400).json({ error: "Missing code or code_verifier" });
+  }
 
   const body = new URLSearchParams({
-    client_id: process.env.SPOTIFY_CLIENT_ID,
-    grant_type: 'authorization_code',
+    client_id,
+    grant_type: "authorization_code",
     code,
-    redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
-    code_verifier: verifier,
+    redirect_uri,
+    code_verifier,
   });
 
-  const tokenRes = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
-  });
+  try {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body,
+    });
 
-  const tokenData = await tokenRes.json();
+    const data = await response.json();
 
-  if (tokenData.access_token) {
-    // Store in secure HttpOnly cookie
-    res.setHeader('Set-Cookie', [
-      `access_token=${tokenData.access_token}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-      `refresh_token=${tokenData.refresh_token}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-    ]);
-    res.status(200).json({ success: true });
-  } else {
-    res.status(400).json({ success: false });
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    // Return tokens to frontend or set HTTP-only cookie here
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
