@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useUser } from '../lib/useUser';
 
+import styles from './Home.module.css'
+
 import ArtistSearch from '../components/ArtistSearch';
 
 export default function Home() {
