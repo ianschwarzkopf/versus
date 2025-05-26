@@ -24,13 +24,19 @@ export default function Callback() {
 
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
+        console.log('Callback response data:', data);
+        if (data.access_token) {
+          // Successful token exchange
           navigate('/home');
+        } else if (data.error) {
+          // Spotify error
+          console.error('Callback error:', data.error, data.error_description || '');
         } else {
-          console.error('Callback error:', data.error);
-          // Optionally show an error message to user here
+          // Unexpected response
+          console.error('Callback error: Unknown response', data);
         }
       })
+
       .catch(err => {
         console.error('Fetch error:', err);
       });
