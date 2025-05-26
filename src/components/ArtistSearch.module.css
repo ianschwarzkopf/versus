@@ -1,7 +1,6 @@
 .search_container {
   width: 100%;
   display: flex;
-  gap: 2rem;
 }
 
 input {
@@ -12,6 +11,12 @@ input {
   font-family: "Plus Jakarta Sans";
   font-size: 1rem;
   background-color: var(--text);
-  color: var(--pri);
+  color: var(--sub);
   font-weight: 800;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  gap: 2rem;
 }

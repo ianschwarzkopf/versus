@@ -2,6 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
+import styles from './SearchResults.module.css'
+
 export default function SearchResults() {
   const { query } = useParams();
   const navigate = useNavigate();
@@ -30,11 +32,11 @@ export default function SearchResults() {
   }, [query]);
 
   return (
-    <div>
+    <div className={styles.search_container}>
       <h2>Results for "{query}"</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 150px)', gap: '1rem' }}>
         {artists.map((artist) => (
-          <div
+          <div className={styles.artist_card}
             key={artist.id}
             onClick={() => navigate(`/artist/${artist.id}`)}
             style={{ cursor: 'pointer', textAlign: 'center' }}
