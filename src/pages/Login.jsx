@@ -5,7 +5,7 @@ export default function Login() {
     await supabase.auth.signInWithOAuth({
       provider: 'spotify',
       options: {
-      redirectTo: `https://versus-plum.vercel.app//callback`,
+      redirectTo: `${window.location.origin}/callback`,
     },
     });
   };
