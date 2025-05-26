@@ -40,22 +40,25 @@ export default async function handler(req, res) {
     const { access_token, refresh_token, expires_in } = data;
 
     // Set HttpOnly, Secure cookies
-    res.setHeader("Set-Cookie", [
-      serialize("spotify_access_token", access_token, {
+    // Setting cookies in OAuth callback handler
+    res.setHeader('Set-Cookie', [
+      serialize('spotify_access_token', access_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: expires_in, // in seconds
-        path: "/",
-        sameSite: "lax",
+        secure: true, // must be true in production
+        maxAge: expires_in, // e.g. 3600 seconds
+        path: '/',
+        sameSite: 'lax',
       }),
-      serialize("spotify_refresh_token", refresh_token, {
+      serialize('spotify_refresh_token', refresh_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
-        path: "/",
-        sameSite: "lax",
+        secure: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: '/',
+        sameSite: 'lax',
       }),
     ]);
+
+
 
     // Respond with success, no tokens sent to client-side JS
     return res.status(200).json({ success: true });

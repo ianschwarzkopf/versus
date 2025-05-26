@@ -6,7 +6,6 @@ import axios from 'axios';
 
 export default function Home() {
   const [userPlaylists, setUserPlaylists] = useState([]);
-  const token = window.localStorage.getItem("token");
 
   const findUserPlaylists = async () => {
     try {
