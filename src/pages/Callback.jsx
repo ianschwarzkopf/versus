@@ -19,8 +19,9 @@ export default function Callback() {
     fetch('/api/callback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, verifier }),
+      body: JSON.stringify({ code, code_verifier: verifier }), // <-- key renamed here
     })
+
       .then(res => res.json())
       .then(data => {
         if (data.success) {
