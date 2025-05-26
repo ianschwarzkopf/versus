@@ -1,13 +1,15 @@
 // Generates a random string (code verifier) of length 128
 export function generateCodeVerifier() {
-  const array = new Uint8Array(128);
+  const array = new Uint8Array(64); // 64 bytes = 86 char string after base64
   window.crypto.getRandomValues(array);
   return base64UrlEncode(array);
 }
 
-// Converts ArrayBuffer to Base64 URL-safe string (no padding, '+' -> '-', '/' -> '_')
+// Base64-url encodes an ArrayBuffer or Uint8Array
 function base64UrlEncode(buffer) {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+  const bytes = new Uint8Array(buffer);
+  const base64String = btoa(String.fromCharCode(...bytes));
+  return base64String
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
