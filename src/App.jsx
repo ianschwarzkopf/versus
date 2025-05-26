@@ -8,6 +8,8 @@ import Layout from './pages/Layout'
 import Login from './pages/Login'
 import Callback from './pages/Callback'
 import Home from './pages/Home'
+import SearchResults from './pages/SearchResults'
+import ArtistAlbums from './pages/ArtistAlbums'
 
 function App() {
 
