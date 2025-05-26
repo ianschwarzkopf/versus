@@ -15,3 +15,7 @@ input {
   color: var(--pri);
   font-weight: 800;
 }
+
+ul {
+  display: none;
+}
