@@ -14,6 +14,7 @@ export default function Callback() {
     }
   };
   getSession();
+  navigate("/home");
 }, []);
 
 
