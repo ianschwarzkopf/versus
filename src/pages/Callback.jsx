@@ -10,8 +10,11 @@ export default function Callback() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
     const verifier = localStorage.getItem("verifier");
+    console.log('Body:', req.body);
 
-    if (!code || !verifier) return;
+    if (!code || !verifier) {
+      return res.status(400).json({ error: 'Missing code or verifier', received: req.body });
+    }
 
     fetch('/api/callback', {
       method: 'POST',
