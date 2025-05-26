@@ -9,7 +9,7 @@ export default function Callback() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
-    const verifier = localStorage.getItem("verifier");
+    const verifier = localStorage.getItem("code_verifier");
 
     if (!code || !verifier) {
       console.error('Missing code or verifier');
