@@ -1,5 +1,5 @@
-// components/ArtistSearch.jsx
 import { useState } from 'react';
+import styles from './ArtistSearch.module.css'
 
 export default function ArtistSearch({ token }) {
   const [query, setQuery] = useState('');
@@ -24,7 +24,7 @@ export default function ArtistSearch({ token }) {
   };
 
   return (
-    <div>
+    <div className={styles.search_container}>
       <input
         type="text"
         placeholder="Search for an artist"

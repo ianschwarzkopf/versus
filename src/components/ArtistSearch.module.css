@@ -1,0 +1,16 @@
+.search_container {
+  width: 100%;
+
+}
+
+input {
+  border-radius: 1rem;
+  border: 2px solid var(--pri);
+  padding: 12px 24px;
+  width: 100%;
+  font-family: "Plus Jakarta Sans";
+  font-size: 1rem;
+  background-color: var(--text);
+  color: var(--pri);
+  font-weight: 800;
+}
