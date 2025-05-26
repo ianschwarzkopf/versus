@@ -8,23 +8,13 @@ export default function Home() {
   const [userPlaylists, setUserPlaylists] = useState([]);
   const token = window.localStorage.getItem("token");
 
-  const findUserPlaylists = async (e) => {
-    e.preventDefault();
-    const { data } = await axios.get("https://api.spotify.com/v1/me/playlists?limit=50", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    const filtered = data.items.filter(item => item !== null);
-    console.log(filtered);
-    setUserPlaylists(filtered);
-  };
-
-  // Example placeholder for playlist track handler
-  const findPlaylistTracks = (playlistId) => {
-    console.log("Clicked playlist ID:", playlistId);
-    // Navigate or fetch songs here
+  const findUserPlaylists = async () => {
+    try {
+      const { data } = await axios.get("/api/playlists");
+      setUserPlaylists(data.items || []);
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+    }
   };
 
   return (

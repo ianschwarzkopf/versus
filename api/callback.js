@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
+import { serialize } from "cookie";
 
 export default async function handler(req, res) {
-  // Only allow POST since this is a sensitive token exchange
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -34,12 +34,31 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      // Forward Spotify's error message
       return res.status(response.status).json(data);
     }
 
-    // Success: return access_token, refresh_token, expires_in, etc.
-    return res.status(200).json(data);
+    const { access_token, refresh_token, expires_in } = data;
+
+    // Set HttpOnly, Secure cookies
+    res.setHeader("Set-Cookie", [
+      serialize("spotify_access_token", access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: expires_in, // in seconds
+        path: "/",
+        sameSite: "lax",
+      }),
+      serialize("spotify_refresh_token", refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
+        path: "/",
+        sameSite: "lax",
+      }),
+    ]);
+
+    // Respond with success, no tokens sent to client-side JS
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error exchanging code for token:", error);
     return res.status(500).json({ error: "Internal Server Error" });
