@@ -1,7 +1,9 @@
 export default function handler(req, res) {
+  console.log("QUERY PARAMS:", req.query); // Add this line
+
   const client_id = process.env.SPOTIFY_CLIENT_ID;
   const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
-  const scope = "user-read-private user-read-email"; // adjust scopes as needed
+  const scope = "user-read-private user-read-email";
   const code_challenge = req.query.code_challenge;
 
   if (!code_challenge) {
@@ -16,6 +18,5 @@ export default function handler(req, res) {
   authUrl.searchParams.append("code_challenge_method", "S256");
   authUrl.searchParams.append("code_challenge", code_challenge);
 
-  // Redirect user to Spotify authorization URL
   res.redirect(authUrl.toString());
 }
