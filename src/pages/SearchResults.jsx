@@ -34,7 +34,7 @@ export default function SearchResults() {
   return (
     <div className={styles.search_container}>
       <h2>Results for "{query}"</h2>
-      <div style={className={styles.results_container}>
+      <div className={styles.results_container}>
         {artists.map((artist) => (
           <div className={styles.artist_card}
             key={artist.id}
