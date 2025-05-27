@@ -34,6 +34,11 @@
   gap: 3rem;
 }
 
+.profile_img {
+  height: 4rem;
+  object-fit: cover;
+}
+
 button.vip {
   border: 2px solid var(--thi);
   color: var(--thi);
