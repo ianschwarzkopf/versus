@@ -24,16 +24,18 @@ export default function Layout() {
     <div className={styles.layout}>
       <header className={styles.navbar}>
         <div className={styles.logo}><img src={Logo}/>versus.fm</div>
-        <nav className={styles.navLinks}>
-          <button className={styles.vip} href="/#premium">VIP</button>
-        </nav>
-        {avatarUrl && (
-      <img className={styles.profile_img}
-        src={avatarUrl}
-        alt="Profile"
-        style={styles.avatar}
-      />
-    )}
+        <div className={styles.nav_container}>
+          <nav className={styles.navLinks}>
+            <button className={styles.vip} href="/#premium">VIP</button>
+          </nav>
+          {avatarUrl && (
+          <img className={styles.profile_img}
+            src={avatarUrl}
+            alt="Profile"
+            style={styles.avatar}
+          />
+        )}
+      </div>
       </header>
 
       <main className={styles.mainContent}>
