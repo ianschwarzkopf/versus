@@ -31,7 +31,9 @@
 
 .navLinks {
   display: flex;
+  margin-left: auto;
   gap: 3rem;
+  margin-right: 3rem;
 }
 
 .profile_img {
