@@ -5,9 +5,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .artist_card {
   display: flex;
   flex-direction: column;
+}
+
+.results_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 2rem;
+  width: 100%;
 }
