@@ -2,6 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
+import styles from './SearchResults.module.css'
+
 export default function ArtistAlbums() {
   const { id } = useParams();
   const [albums, setAlbums] = useState([]);
@@ -28,11 +30,11 @@ export default function ArtistAlbums() {
   }, [id]);
 
   return (
-    <div>
+    <div className={styles.search_container}>
       <h2>Albums</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 150px)', gap: '1rem' }}>
+      <div className={styles.results_container}>
         {albums.map((album) => (
-          <div key={album.id} style={{ textAlign: 'center' }}>
+          <div key={album.id} className={styles.artist_card}>
             <img
               src={album.images[0]?.url || '/placeholder.jpg'}
               alt={album.name}
