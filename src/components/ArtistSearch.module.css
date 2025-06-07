@@ -11,8 +11,12 @@ input {
   font-family: "Plus Jakarta Sans";
   font-size: 1rem;
   background-color: var(--text);
-  color: var(--sub);
+  color: var(--bg);
   font-weight: 800;
+}
+
+input::placeholder {
+  color: var(--bg);
 }
 
 form {
