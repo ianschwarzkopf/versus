@@ -61,29 +61,17 @@ export default function ArtistAlbums() {
             onClick={() => toggleAlbum(album)}
             style={{
               position: 'relative',
-              border: isSelected(album.id) ? '2px solid limegreen' : '2px solid transparent',
-              cursor: 'pointer',
+
             }}
           >
             <img
               src={album.images[0]?.url || '/placeholder.jpg'}
               alt={album.name}
-              style={{ width: '100%', borderRadius: '8px' }}
+              style={{ width: '100%', borderRadius: '8px', border: isSelected(album.id) ? '2px solid var(--pri)' : '2px solid transparent',
+              cursor: 'pointer',}}
             />
             {isSelected(album.id) && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  background: 'limegreen',
-                  color: 'white',
-                  borderRadius: '50%',
-                  padding: '0.3rem 0.4rem',
-                  fontSize: '0.9rem',
-                  fontWeight: 'bold',
-                }}
-              >
+              <div className={styles.selected}>
                 ✔
               </div>
             )}
