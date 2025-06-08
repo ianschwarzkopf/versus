@@ -1,42 +1,145 @@
+// pages/Ranking.jsx
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function RankingPage() {
+export default function Ranking() {
   const { state } = useLocation();
+  const albumIds = state?.albumIds || [];
+
   const [tracks, setTracks] = useState([]);
+  const [matchups, setMatchups] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [results, setResults] = useState({});
+  const [history, setHistory] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const fetchTracks = async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.provider_token;
+    async function fetchTracks() {
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data?.session?.provider_token;
+      setToken(accessToken);
 
-      if (!token || !state?.albumIds) return;
+      if (!accessToken || albumIds.length === 0) return;
 
       const allTracks = [];
 
-      for (const albumId of state.albumIds) {
+      for (const albumId of albumIds) {
         const res = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` }
         });
-        const json = await res.json();
-        allTracks.push(...json.items);
+        const albumTracks = await res.json();
+
+        // Combine track info with album info
+        const albumRes = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const albumData = await albumRes.json();
+
+        for (const track of albumTracks.items) {
+          allTracks.push({
+            id: track.id,
+            name: track.name,
+            previewUrl: track.preview_url,
+            albumArt: albumData.images[0]?.url,
+            albumName: albumData.name,
+            uri: track.uri
+          });
+        }
       }
 
       setTracks(allTracks);
-    };
+      setResults(Object.fromEntries(allTracks.map((track) => [track.id, 0])));
+
+      const pairs = [];
+      for (let i = 0; i < allTracks.length; i++) {
+        for (let j = i + 1; j < allTracks.length; j++) {
+          pairs.push([allTracks[i], allTracks[j]]);
+        }
+      }
+      setMatchups(pairs.sort(() => Math.random() - 0.5));
+    }
 
     fetchTracks();
-  }, [state]);
+  }, [albumIds]);
+
+  const handleVote = (choice) => {
+    const [t1, t2] = matchups[currentIndex];
+    const updated = { ...results };
+    const newHistory = [...history];
+
+    if (choice === 1) updated[t1.id]++;
+    else if (choice === 2) updated[t2.id]++;
+    else if (choice === 0) {
+      updated[t1.id] += 0.5;
+      updated[t2.id] += 0.5;
+    }
+
+    newHistory.push({ t1, t2, choice });
+    setResults(updated);
+    setHistory(newHistory);
+
+    const next = currentIndex + 1;
+    setCurrentIndex(next);
+    if (next >= matchups.length) setShowResults(true);
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    const { t1, t2, choice } = history.pop();
+    const updated = { ...results };
+
+    if (choice === 1) updated[t1.id]--;
+    else if (choice === 2) updated[t2.id]--;
+    else if (choice === 0) {
+      updated[t1.id] -= 0.5;
+      updated[t2.id] -= 0.5;
+    }
+
+    setResults(updated);
+    setHistory([...history]);
+    setCurrentIndex((i) => i - 1);
+    setShowResults(false);
+  };
+
+  if (showResults) {
+    const sorted = tracks
+      .map((track) => ({ ...track, score: results[track.id] }))
+      .sort((a, b) => b.score - a.score);
+
+    return (
+      <div>
+        <h2>Ranking Results</h2>
+        <ul>
+          {sorted.map((t, i) => (
+            <li key={t.id}>
+              #{i + 1}: {t.name} ({t.albumName}) – {t.score}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  if (!matchups.length) return <p>Loading matchups...</p>;
+
+  const [t1, t2] = matchups[currentIndex];
 
   return (
-    <div>
-      <h1>Rank the Songs</h1>
-      {tracks.map((track) => (
-        <div key={track.id}>{track.name}</div>
-      ))}
+    <div style={{ textAlign: 'center' }}>
+      <h2>Choose the Better Track</h2>
+      <p>{currentIndex + 1} / {matchups.length}</p>
+
+      <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 40 }}>
+        <TrackCard track={t1} onVote={() => handleVote(1)} />
+        <div>
+          <button onClick={handleUndo}>Undo</button>
+          <button onClick={() => handleVote(0)}>Tie</button>
+        </div>
+        <TrackCard track={t2} onVote={() => handleVote(2)} />
+      </div>
     </div>
   );
 }

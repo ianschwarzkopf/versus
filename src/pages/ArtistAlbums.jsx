@@ -53,7 +53,7 @@ export default function ArtistAlbums() {
   return (
     <div className={styles.search_container}>
       <h2>Albums</h2>
-      <div styles = {{marginBottom: '1rem'}}>
+      <div style={{marginBottom: '1rem'}}>
         <button onClick={startRanking}>Start Ranking ({selected.length})</button>
       </div>
       <div className={styles.results_container}>
