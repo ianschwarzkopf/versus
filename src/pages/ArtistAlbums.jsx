@@ -52,12 +52,10 @@ export default function ArtistAlbums() {
 
   return (
     <div className={styles.search_container}>
-      <div>
-        <h2>Albums</h2>
-
+      <h2>Albums</h2>
+      <div styles = {{marginBottom: '1rem'}}>
         <button onClick={startRanking}>Start Ranking ({selected.length})</button>
-      </div>
-      )}
+      </div
       <div className={styles.results_container}>
         {albums.map((album) => (
           <div
@@ -74,11 +72,6 @@ export default function ArtistAlbums() {
               style={{ width: '100%', borderRadius: '8px', border: isSelected(album.id) ? '2px solid var(--pri)' : '2px solid transparent',
               cursor: 'pointer',}}
             />
-            {isSelected(album.id) && (
-              <div className={styles.selected}>
-                ✔
-              </div>
-            )}
             <p>{album.name}</p>
           </div>
         ))}
