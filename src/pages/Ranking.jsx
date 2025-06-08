@@ -1,11 +1,8 @@
-// pages/Ranking.jsx
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-
 import { loadSpotifyPlayer } from '../lib/spotifyPlayer';
 import TrackCard from '../components/TrackCard';
-
 
 export default function Ranking() {
   const { state } = useLocation();
@@ -19,13 +16,12 @@ export default function Ranking() {
   const [showResults, setShowResults] = useState(false);
 
   const [token, setToken] = useState(null);
-
   const [deviceId, setDeviceId] = useState(null);
 
   useEffect(() => {
     async function setup() {
       const { data } = await supabase.auth.getSession();
-      const accessToken = data?.session?.provider_token;
+      const accessToken = data?.session?.access_token;
       setToken(accessToken);
 
       const { device_id } = await loadSpotifyPlayer(accessToken);
@@ -37,7 +33,7 @@ export default function Ranking() {
   useEffect(() => {
     async function fetchTracks() {
       const { data } = await supabase.auth.getSession();
-      const accessToken = data?.session?.provider_token;
+      const accessToken = data?.session?.access_token;
       setToken(accessToken);
 
       if (!accessToken || albumIds.length === 0) return;
@@ -50,7 +46,6 @@ export default function Ranking() {
         });
         const albumTracks = await res.json();
 
-        // Combine track info with album info
         const albumRes = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
@@ -77,6 +72,7 @@ export default function Ranking() {
           pairs.push([allTracks[i], allTracks[j]]);
         }
       }
+
       setMatchups(pairs.sort(() => Math.random() - 0.5));
     }
 
@@ -141,9 +137,10 @@ export default function Ranking() {
     );
   }
 
-  if (!matchups.length) return <p>Loading matchups...</p>;
+  if (!matchups.length || !tracks.length) return <p>Loading matchups...</p>;
 
-  const [t1, t2] = matchups[currentIndex];
+  const [t1, t2] = matchups[currentIndex] || [null, null];
+  if (!t1 || !t2) return <p>Loading tracks...</p>;
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -151,14 +148,13 @@ export default function Ranking() {
       <p>{currentIndex + 1} / {matchups.length}</p>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <TrackCard track={player1} token={token} deviceId={deviceId} onVote={handleVote} position={1} />
+        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} />
         <div style={{ margin: '0 1rem' }}>
           <button onClick={handleUndo}>Undo</button>
           <button onClick={() => handleVote(0)}>Tie</button>
         </div>
-        <TrackCard track={player2} token={token} deviceId={deviceId} onVote={handleVote} position={2} />
+        <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} />
       </div>
-
     </div>
   );
 }
