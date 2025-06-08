@@ -1,129 +1,197 @@
+// pages/Ranking.jsx
+import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { loadSpotifyPlayer } from '../lib/spotifyPlayer';
+import TrackCard from '../components/TrackCard';
 
 export default function Ranking() {
+  const { state } = useLocation();
+  const albumIds = state?.albumIds || [];
+
+  const [tracks, setTracks] = useState([]);
+  const [matchups, setMatchups] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [results, setResults] = useState({});
+  const [history, setHistory] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [token, setToken] = useState(null);
+  const [deviceId, setDeviceId] = useState(null);
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
-  const [spotifyUser, setSpotifyUser] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function getSession() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    async function setup() {
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data?.session?.access_token;
+      if (!accessToken) return;
 
-      setUser(session?.user ?? null);
-      setAccessToken(session?.provider_token ?? null);
-
-      if (session?.provider_token) {
-        fetchSpotifyUser(session.provider_token);
-      }
+      setUser(data.session.user);
+      setToken(accessToken);
+      const { device_id } = await loadSpotifyPlayer(accessToken);
+      setDeviceId(device_id);
     }
-    getSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setAccessToken(session?.provider_token ?? null);
-      setSpotifyUser(null);
-      setError(null);
-
-      if (session?.provider_token) {
-        fetchSpotifyUser(session.provider_token);
-      }
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    setup();
   }, []);
 
-  async function fetchSpotifyUser(token) {
-    try {
-      const res = await fetch('https://api.spotify.com/v1/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  useEffect(() => {
+    async function fetchTracks() {
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data?.session?.access_token;
+      setToken(accessToken);
+      if (!accessToken || albumIds.length === 0) return;
 
-      if (!res.ok) {
-        setError(`Spotify API error: ${res.status} ${res.statusText}`);
-        setSpotifyUser(null);
-        return;
+      const allTracks = [];
+
+      for (const albumId of albumIds) {
+        const res = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const albumTracks = await res.json();
+
+        const albumRes = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const albumData = await albumRes.json();
+
+        for (const track of albumTracks.items) {
+          allTracks.push({
+            id: track.id,
+            name: track.name,
+            previewUrl: track.preview_url,
+            albumArt: albumData.images[0]?.url,
+            albumName: albumData.name,
+            uri: track.uri
+          });
+        }
       }
 
-      const data = await res.json();
-      setSpotifyUser(data);
-      setError(null);
-    } catch (err) {
-      setError('Fetch failed: ' + err.message);
-      setSpotifyUser(null);
-    }
-  }
+      setTracks(allTracks);
+      setResults(Object.fromEntries(allTracks.map((track) => [track.id, 0])));
 
-  const signInWithSpotify = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'spotify',
-      options: {
-        redirectTo: `${window.location.origin}/callback`,
-        scopes: [
-          'user-read-email',
-          'user-read-private',
-          'streaming',
-          'user-read-playback-state',
-          'user-modify-playback-state',
-          'user-read-currently-playing',
-        ].join(' '),
-      },
-    });
+      const pairs = [];
+      for (let i = 0; i < allTracks.length; i++) {
+        for (let j = i + 1; j < allTracks.length; j++) {
+          pairs.push([allTracks[i], allTracks[j]]);
+        }
+      }
+
+      setMatchups(pairs.sort(() => Math.random() - 0.5));
+    }
+
+    fetchTracks();
+  }, [albumIds]);
+
+  const handleVote = (choice) => {
+    const [t1, t2] = matchups[currentIndex];
+    const updated = { ...results };
+    const newHistory = [...history];
+
+    if (choice === 1) updated[t1.id]++;
+    else if (choice === 2) updated[t2.id]++;
+    else if (choice === 0) {
+      updated[t1.id] += 0.5;
+      updated[t2.id] += 0.5;
+    }
+
+    newHistory.push({ t1, t2, choice });
+    setResults(updated);
+    setHistory(newHistory);
+
+    const next = currentIndex + 1;
+    setCurrentIndex(next);
+    if (next >= matchups.length) setShowResults(true);
   };
 
-  const signOut = async () => {
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    const { t1, t2, choice } = history.pop();
+    const updated = { ...results };
+
+    if (choice === 1) updated[t1.id]--;
+    else if (choice === 2) updated[t2.id]--;
+    else if (choice === 0) {
+      updated[t1.id] -= 0.5;
+      updated[t2.id] -= 0.5;
+    }
+
+    setResults(updated);
+    setHistory([...history]);
+    setCurrentIndex((i) => i - 1);
+    setShowResults(false);
+  };
+
+  // --- Logout button handler ---
+  const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    setAccessToken(null);
-    setSpotifyUser(null);
-    setError(null);
+    setToken(null);
+    setTracks([]);
+    setMatchups([]);
+    setCurrentIndex(0);
+    setResults({});
+    setHistory([]);
+    setShowResults(false);
   };
 
+  if (showResults) {
+    const sorted = tracks
+      .map((track) => ({ ...track, score: results[track.id] }))
+      .sort((a, b) => b.score - a.score);
+
+    return (
+      <div>
+        {/* Logout button top right */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
+          {user && <button onClick={handleLogout}>Logout</button>}
+        </div>
+
+        <h2>Ranking Results</h2>
+        <ul>
+          {sorted.map((t, i) => (
+            <li key={t.id}>
+              #{i + 1}: {t.name} ({t.albumName}) – {t.score}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  if (!matchups.length)
+    return (
+      <>
+        {/* Logout button top right */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
+          {user && <button onClick={handleLogout}>Logout</button>}
+        </div>
+
+        <p>Loading matchups...</p>
+      </>
+    );
+
+  const [t1, t2] = matchups[currentIndex] || [null, null];
+
   return (
-    <div style={{ padding: 20 }}>
-      {user ? (
-        <>
-          <h3>Logged in as {user.email}</h3>
-          <button onClick={signOut}>Logout</button>
+    <div style={{ textAlign: 'center' }}>
+      {/* Logout button top right */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
+        {user && <button onClick={handleLogout}>Logout</button>}
+      </div>
 
-          <h4>Spotify Access Token:</h4>
-          <pre style={{ maxHeight: 100, overflow: 'auto', background: '#eee', padding: 10 }}>
-            {accessToken ?? 'No token'}
-          </pre>
+      <h2>Choose the Better Track</h2>
+      <p>
+        {currentIndex + 1} / {matchups.length}
+      </p>
 
-          {error && (
-            <p style={{ color: 'red' }}>
-              <b>Error:</b> {error}
-            </p>
-          )}
-
-          {spotifyUser ? (
-            <div>
-              <h4>Spotify User Data:</h4>
-              <p>Name: {spotifyUser.display_name}</p>
-              <p>Email: {spotifyUser.email}</p>
-              <img
-                src={spotifyUser.images?.[0]?.url}
-                alt="Spotify profile"
-                width={100}
-                height={100}
-                style={{ borderRadius: '50%' }}
-              />
-            </div>
-          ) : (
-            !error && <p>Loading Spotify user info...</p>
-          )}
-        </>
-      ) : (
-        <button onClick={signInWithSpotify}>Login with Spotify</button>
-      )}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} />
+        <div style={{ margin: '0 1rem' }}>
+          <button onClick={handleUndo}>Undo</button>
+          <button onClick={() => handleVote(0)}>Tie</button>
+        </div>
+        <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} />
+      </div>
     </div>
   );
 }
