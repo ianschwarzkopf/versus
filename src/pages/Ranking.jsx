@@ -22,6 +22,7 @@ export default function Ranking() {
   const [deviceId, setDeviceId] = useState(null);
 
   const [volume, setVolume] = useState(0.5);
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState(null);
 
   useEffect(() => {
     async function setup() {
@@ -167,7 +168,7 @@ export default function Ranking() {
       <p>{currentIndex + 1} / {matchups.length}</p>
 
       <div className={styles.ranking_selection}>
-        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} />
+        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} isActive={track.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
         <div className={styles.mid_buttons}>
           <button onClick={handleUndo}>Undo</button>
           <input
@@ -175,7 +176,7 @@ export default function Ranking() {
             type="range"
             min="0"
             max="100"
-            step="1"
+            step="10"
             value={volume}
             onChange={changeVolume}
           />
