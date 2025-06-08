@@ -35,7 +35,7 @@ export default function TrackCard({ track, token, deviceId, onVote, position }) 
 
   return (
     <div style={styles.card}>
-      <img src={track.album.images[0]?.url} alt={track.name} style={styles.image} />
+      <img src={track.albumArt} alt={track.name} style={styles.image} />
       <h3>{track.name}</h3>
       <div style={styles.controls}>
         <button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
