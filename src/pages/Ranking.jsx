@@ -1,3 +1,4 @@
+// pages/Ranking.jsx
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
@@ -14,7 +15,6 @@ export default function Ranking() {
   const [results, setResults] = useState({});
   const [history, setHistory] = useState([]);
   const [showResults, setShowResults] = useState(false);
-
   const [token, setToken] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
 
@@ -22,11 +22,13 @@ export default function Ranking() {
     async function setup() {
       const { data } = await supabase.auth.getSession();
       const accessToken = data?.session?.access_token;
-      setToken(accessToken);
+      if (!accessToken) return;
 
+      setToken(accessToken);
       const { device_id } = await loadSpotifyPlayer(accessToken);
       setDeviceId(device_id);
     }
+
     setup();
   }, []);
 
@@ -35,7 +37,6 @@ export default function Ranking() {
       const { data } = await supabase.auth.getSession();
       const accessToken = data?.session?.access_token;
       setToken(accessToken);
-
       if (!accessToken || albumIds.length === 0) return;
 
       const allTracks = [];
@@ -137,10 +138,9 @@ export default function Ranking() {
     );
   }
 
-  if (!matchups.length || !tracks.length) return <p>Loading matchups...</p>;
+  if (!matchups.length) return <p>Loading matchups...</p>;
 
   const [t1, t2] = matchups[currentIndex] || [null, null];
-  if (!t1 || !t2) return <p>Loading tracks...</p>;
 
   return (
     <div style={{ textAlign: 'center' }}>
