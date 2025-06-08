@@ -53,6 +53,11 @@ export default function ArtistAlbums() {
   return (
     <div className={styles.search_container}>
       <h2>Albums</h2>
+      {selected.length > 0 && (
+        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <button onClick={startRanking}>Start Ranking ({selected.length})</button>
+        </div>
+      )}
       <div className={styles.results_container}>
         {albums.map((album) => (
           <div
@@ -61,7 +66,6 @@ export default function ArtistAlbums() {
             onClick={() => toggleAlbum(album)}
             style={{
               position: 'relative',
-
             }}
           >
             <img
@@ -70,21 +74,12 @@ export default function ArtistAlbums() {
               style={{ width: '100%', borderRadius: '8px', border: isSelected(album.id) ? '2px solid var(--pri)' : '2px solid transparent',
               cursor: 'pointer',}}
             />
-            {isSelected(album.id) && (
-              <div className={styles.selected}>
-                ✔
-              </div>
-            )}
             <p>{album.name}</p>
           </div>
         ))}
       </div>
 
-      {selected.length > 0 && (
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <button onClick={startRanking}>Start Ranking ({selected.length})</button>
-        </div>
-      )}
+
     </div>
   );
 }
