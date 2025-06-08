@@ -10,6 +10,7 @@ import Callback from './pages/Callback'
 import Home from './pages/Home'
 import SearchResults from './pages/SearchResults'
 import ArtistAlbums from './pages/ArtistAlbums'
+import Ranking from './pages/Ranking'
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="home" element={<Home />} />
         <Route path="/search/:query" element={<SearchResults />} />
         <Route path="/artist/:id" element={<ArtistAlbums />} />
+        <Route path="/ranking" element={<Ranking />} />
       </Route>
     </Routes>
   )

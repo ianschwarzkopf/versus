@@ -10,13 +10,13 @@ input {
   width: 100%;
   font-family: "Plus Jakarta Sans";
   font-size: 1rem;
-  background-color: var(--text);
-  color: var(--bg);
+  background-color: var(--bg);
+  color: var(--text);
   font-weight: 800;
 }
 
 input::placeholder {
-  color: var(--bg);
+  color: var(--text);
 }
 
 form {
