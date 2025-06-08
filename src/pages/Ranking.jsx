@@ -21,7 +21,6 @@ export default function Ranking() {
   const [token, setToken] = useState(null);
 
   const [deviceId, setDeviceId] = useState(null);
-  const [token, setToken] = useState(null);
 
   useEffect(() => {
     async function setup() {
