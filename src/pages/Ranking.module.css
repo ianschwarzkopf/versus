@@ -1,0 +1,26 @@
+.ranking_container {
+  padding: 2rem;
+  max-width: 75rem;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.ranking_selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: center;
+}
+
+.volumeSlider {
+
+}
+
+.mid_buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

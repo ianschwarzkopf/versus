@@ -1,0 +1,27 @@
+.card {
+  padding: 1rem;
+  border: 1px solid var(--text);
+  border-radius: 8px;
+  margin: 1rem;
+}
+
+.image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.controls {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voteBtn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}

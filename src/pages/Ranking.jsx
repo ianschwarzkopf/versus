@@ -19,6 +19,8 @@ export default function Ranking() {
   const [token, setToken] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
 
+  const [volume, setVolume] = useState(0.5);
+
   useEffect(() => {
     async function setup() {
       const { data } = await supabase.auth.getSession();
@@ -107,6 +109,15 @@ export default function Ranking() {
     if (next >= matchups.length) setShowResults(true);
   };
 
+  const changeVolume = async (e) => {
+    const vol = parseFloat(e.target.value);
+    setVolume(vol);
+    await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${Math.round(vol * 100)}&device_id=${deviceId}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  };
+
   const handleUndo = () => {
     if (history.length === 0) return;
     const { t1, t2, choice } = history.pop();
@@ -149,14 +160,23 @@ export default function Ranking() {
   const [t1, t2] = matchups[currentIndex] || [null, null];
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div className={styles.ranking_container}>
       <h2>Choose the Better Track</h2>
       <p>{currentIndex + 1} / {matchups.length}</p>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div className={styles.ranking_selection}>
         <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} />
-        <div style={{ margin: '0 1rem' }}>
+        <div className={styles.mid_buttons}>
           <button onClick={handleUndo}>Undo</button>
+          <input
+            className={styles.volumeSlider}
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={volume}
+            onChange={changeVolume}
+          />
           <button onClick={() => handleVote(0)}>Tie</button>
         </div>
         <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} />
