@@ -168,7 +168,7 @@ export default function Ranking() {
       <p>{currentIndex + 1} / {matchups.length}</p>
 
       <div className={styles.ranking_selection}>
-        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} isActive={track.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
+        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
         <div className={styles.mid_buttons}>
           <button onClick={handleUndo}>Undo</button>
           <input
@@ -182,7 +182,7 @@ export default function Ranking() {
           />
           <button onClick={() => handleVote(0)}>Tie</button>
         </div>
-        <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} />
+        <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
       </div>
     </div>
   );
