@@ -5,6 +5,8 @@ import { supabase } from '../lib/supabase';
 import { loadSpotifyPlayer } from '../lib/spotifyPlayer';
 import TrackCard from '../components/TrackCard';
 
+import styles from './Ranking.module.css';
+
 export default function Ranking() {
   const { state } = useLocation();
   const albumIds = state?.albumIds || [];
