@@ -15,17 +15,16 @@ export default function Ranking() {
   const [results, setResults] = useState({});
   const [history, setHistory] = useState([]);
   const [showResults, setShowResults] = useState(false);
+
   const [token, setToken] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function setup() {
       const { data } = await supabase.auth.getSession();
-      const accessToken = data?.session?.access_token;
+      const accessToken = data?.session?.provider_token;
       if (!accessToken) return;
 
-      setUser(data.session.user);
       setToken(accessToken);
       const { device_id } = await loadSpotifyPlayer(accessToken);
       setDeviceId(device_id);
@@ -37,8 +36,7 @@ export default function Ranking() {
   useEffect(() => {
     async function fetchTracks() {
       const { data } = await supabase.auth.getSession();
-      const accessToken = data?.session?.access_token;
-      setToken(accessToken);
+      const accessToken = data?.session?.provider_token;
       if (!accessToken || albumIds.length === 0) return;
 
       const allTracks = [];
@@ -47,11 +45,18 @@ export default function Ranking() {
         const res = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
+
+        if (!res.ok) {
+          console.error("Failed to fetch album tracks", await res.text());
+          continue;
+        }
+
         const albumTracks = await res.json();
 
         const albumRes = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
+
         const albumData = await albumRes.json();
 
         for (const track of albumTracks.items) {
@@ -75,7 +80,6 @@ export default function Ranking() {
           pairs.push([allTracks[i], allTracks[j]]);
         }
       }
-
       setMatchups(pairs.sort(() => Math.random() - 0.5));
     }
 
@@ -121,19 +125,6 @@ export default function Ranking() {
     setShowResults(false);
   };
 
-  // --- Logout button handler ---
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setToken(null);
-    setTracks([]);
-    setMatchups([]);
-    setCurrentIndex(0);
-    setResults({});
-    setHistory([]);
-    setShowResults(false);
-  };
-
   if (showResults) {
     const sorted = tracks
       .map((track) => ({ ...track, score: results[track.id] }))
@@ -141,11 +132,6 @@ export default function Ranking() {
 
     return (
       <div>
-        {/* Logout button top right */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
-          {user && <button onClick={handleLogout}>Logout</button>}
-        </div>
-
         <h2>Ranking Results</h2>
         <ul>
           {sorted.map((t, i) => (
@@ -158,31 +144,14 @@ export default function Ranking() {
     );
   }
 
-  if (!matchups.length)
-    return (
-      <>
-        {/* Logout button top right */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
-          {user && <button onClick={handleLogout}>Logout</button>}
-        </div>
-
-        <p>Loading matchups...</p>
-      </>
-    );
+  if (!matchups.length) return <p>Loading matchups...</p>;
 
   const [t1, t2] = matchups[currentIndex] || [null, null];
 
   return (
     <div style={{ textAlign: 'center' }}>
-      {/* Logout button top right */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
-        {user && <button onClick={handleLogout}>Logout</button>}
-      </div>
-
       <h2>Choose the Better Track</h2>
-      <p>
-        {currentIndex + 1} / {matchups.length}
-      </p>
+      <p>{currentIndex + 1} / {matchups.length}</p>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} />
