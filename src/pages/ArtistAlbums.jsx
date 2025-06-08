@@ -55,7 +55,7 @@ export default function ArtistAlbums() {
       <h2>Albums</h2>
       <div styles = {{marginBottom: '1rem'}}>
         <button onClick={startRanking}>Start Ranking ({selected.length})</button>
-      </div
+      </div>
       <div className={styles.results_container}>
         {albums.map((album) => (
           <div
