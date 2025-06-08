@@ -26,3 +26,14 @@
   gap: 2rem;
   width: 100%;
 }
+
+.selected {
+  position: absolute;
+  top: 8;
+  right: 8;
+  background: var(--pri);
+  color: var(--text);
+  border-radius: 50%;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.9rem;
+}
