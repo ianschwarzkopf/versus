@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
+import TrackCard from '../components/TrackCard';
+
 export default function Ranking() {
   const { state } = useLocation();
   const albumIds = state?.albumIds || [];
