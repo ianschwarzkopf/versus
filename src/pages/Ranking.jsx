@@ -116,7 +116,7 @@ export default function Ranking() {
   const changeVolume = async (e) => {
     const vol = parseFloat(e.target.value);
     setVolume(vol);
-    await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${vol}&device_id=${deviceId}`, {
+    await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${Math.round(vol * 100)}&device_id=${deviceId}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -173,11 +173,11 @@ export default function Ranking() {
         <div className={styles.mid_buttons}>
           <button onClick={handleUndo}>Undo</button>
           <input
-            className={styles.volumeSlider}
+            className={styles.seekSlider}
             type="range"
             min="0"
-            max="100"
-            step="10"
+            max="1"
+            step="0.1"
             value={volume}
             onChange={changeVolume}
           />
