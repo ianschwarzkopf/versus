@@ -15,7 +15,7 @@
 }
 
 .seekSlider {
-  min-width: 7rem;
+  max-width: 7rem;
   -webkit-appearance: none;
   background: transparent;
   cursor: pointer;
@@ -36,7 +36,7 @@
   width: 12px;
   background: var(--text);
   border-radius: 50%;
-  margin-top: -8px;
+  margin-top: 0px;
 }
 
 .seekSlider::-moz-range-track {
@@ -51,7 +51,7 @@
   width: 12px;
   background: var(--text);
   border-radius: 50%;
-  margin-top: -8px;
+  margin-top: 0px;
 }
 
 .mid_buttons {
