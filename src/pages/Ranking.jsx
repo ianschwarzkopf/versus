@@ -71,7 +71,8 @@ export default function Ranking() {
             previewUrl: track.preview_url,
             albumArt: albumData.images[0]?.url,
             albumName: albumData.name,
-            uri: track.uri
+            uri: track.uri,
+            duration_ms: track.duration_ms
           });
         }
       }
