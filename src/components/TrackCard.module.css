@@ -16,11 +16,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 1.5rem 0;
+}
+
+h1 {
+  margin-block-end: .5rem;
 }
 
 .artist_names {
   display: flex;
   flex-direction: column;
+  line-height: 0;
 }
 
 .playBtn {
@@ -44,7 +50,8 @@
   background: transparent;
   cursor: pointer;
   padding: 0;
-  margin: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   border: none;
 }
 
@@ -56,8 +63,8 @@
 
 .seekSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 8px;
-  width: 8px;
+  height: 12px;
+  width: 12px;
   background: var(--text);
   border-radius: 50%;
   margin-top: -4px;
@@ -71,8 +78,8 @@
 
 .seekSlider::-moz-range-thumb {
   -webkit-appearance: none;
-  height: 8px;
-  width: 8px;
+  height: 12px;
+  width: 12px;
   background: var(--text);
   border-radius: 50%;
   margin-top: -4px;

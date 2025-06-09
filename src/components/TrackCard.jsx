@@ -126,7 +126,7 @@ export default function TrackCard({
       />
       <div className={styles.controls}>
         <div className={styles.artist_names}>
-          <h3>{track.name}</h3>
+          <h1>{track.name}</h1>
           <h4>{track.artist.map(artist => artist.name).join(', ')}</h4>
         </div>
 
