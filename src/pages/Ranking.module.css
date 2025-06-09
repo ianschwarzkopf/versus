@@ -27,7 +27,7 @@
 .seekSlider::-webkit-slider-runnable-track {
   height: 8px;
   background: var(--pri);
-  border-radius: 2px;
+  border-radius: 8px;
 }
 
 .seekSlider::-webkit-slider-thumb {
@@ -42,7 +42,7 @@
 .seekSlider::-moz-range-track {
   height: 8px;
   background: var(--pri);
-  border-radius: 2px;
+  border-radius: 8px;
 }
 
 .seekSlider::-moz-range-thumb {
@@ -60,4 +60,10 @@
   justify-content: center;
   align-items: center;
   gap: 3rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .ranking_selection {
+    grid-template-columns: 1fr 0.5fr 1fr;
+  }
 }
