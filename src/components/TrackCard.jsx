@@ -130,7 +130,7 @@ export default function TrackCard({
           <h4>{track.artist.map(artist => artist.name).join(', ')}</h4>
         </div>
 
-        <button className={styles.playBtn} onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
+        <button className={styles.playBtn} onClick={togglePlay}>{isPlaying ? '||' : '>'}</button>
       </div>
 
       <button onClick={() => onVote(position)}>
