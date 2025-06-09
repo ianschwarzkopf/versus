@@ -68,6 +68,7 @@ export default function Ranking() {
           allTracks.push({
             id: track.id,
             name: track.name,
+            artist: track.artists,
             previewUrl: track.preview_url,
             albumArt: albumData.images[0]?.url,
             albumName: albumData.name,

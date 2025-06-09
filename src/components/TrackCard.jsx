@@ -124,14 +124,16 @@ export default function TrackCard({
         onTouchEnd={handleSeekEnd}
         disabled={!isActive}
       />
-
-      <h3>{track.name}</h3>
-
       <div className={styles.controls}>
-        <button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
+        <div className={styles.artist_names}>
+          <h3>{track.name}</h3>
+          <h4>{track.artist.map(artist => artist.name).join(', ')}</h4>
+        </div>
+
+        <button className={styles.playBtn} onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
       </div>
 
-      <button onClick={() => onVote(position)} className={styles.voteBtn}>
+      <button onClick={() => onVote(position)}>
         Vote
       </button>
     </div>
