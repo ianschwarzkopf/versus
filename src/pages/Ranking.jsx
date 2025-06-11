@@ -189,7 +189,6 @@ export default function Ranking() {
   return (
     <div className={styles.ranking_container}>
       <h2>Choose the Better Track</h2>
-
       <div className={styles.ranking_selection}>
         <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
         <div className={styles.mid_buttons}>
@@ -207,7 +206,7 @@ export default function Ranking() {
         </div>
         <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
       </div>
-      <div className="progressBar" style={{width: `${(currentMatchupIndex / matchups.length) * 100}%`}}/>
+      <div className="progressBar" style={{width: `${(currentIndex / matchups.length) * 100}%`}}/>
     </div>
   );
 }
