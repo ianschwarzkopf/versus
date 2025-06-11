@@ -19,7 +19,7 @@ export default function Callback() {
       if (session?.provider_token) {
         navigate('/home');
       } else {
-        console.warn("⚠️ No Spotify token found in session");
+        console.warn("No Spotify token found in session");
       }
     };
 

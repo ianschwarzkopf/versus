@@ -7,6 +7,12 @@ import TrackCard from '../components/TrackCard';
 
 import styles from './Ranking.module.css';
 
+async function getSpotifyToken() {
+  const { data } = await supabase.auth.getSession();
+  return data?.session?.provider_token;
+}
+
+
 export default function Ranking() {
   const { state } = useLocation();
   const albumIds = state?.albumIds || [];
@@ -25,6 +31,8 @@ export default function Ranking() {
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState(null);
 
   useEffect(() => {
+    let subscription;
+
     async function setup() {
       const { data } = await supabase.auth.getSession();
       const accessToken = data?.session?.provider_token;
@@ -33,15 +41,28 @@ export default function Ranking() {
       setToken(accessToken);
       const { device_id } = await loadSpotifyPlayer(accessToken);
       setDeviceId(device_id);
+
+      // Listen for token refresh events
+      const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'TOKEN_REFRESHED') {
+          console.log('Spotify token refreshed');
+          setToken(session.provider_token);
+        }
+      });
+      subscription = sub;
     }
 
     setup();
+
+    return () => {
+      subscription?.subscription.unsubscribe();
+    };
   }, []);
+
 
   useEffect(() => {
     async function fetchTracks() {
-      const { data } = await supabase.auth.getSession();
-      const accessToken = data?.session?.provider_token;
+      const accessToken = await getSpotifyToken();
       if (!accessToken || albumIds.length === 0) return;
 
       const allTracks = [];
@@ -119,9 +140,10 @@ export default function Ranking() {
     setVolume(vol);
     await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${Math.round(vol * 100)}&device_id=${deviceId}`, {
       method: 'PUT',
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${await getSpotifyToken()}` },
     });
   };
+
 
   const handleUndo = () => {
     if (history.length === 0) return;
@@ -167,7 +189,6 @@ export default function Ranking() {
   return (
     <div className={styles.ranking_container}>
       <h2>Choose the Better Track</h2>
-      <p>{currentIndex + 1} / {matchups.length}</p>
 
       <div className={styles.ranking_selection}>
         <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
@@ -186,6 +207,7 @@ export default function Ranking() {
         </div>
         <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
       </div>
+      <div className="progressBar" style={{width: `${(currentMatchupIndex / matchups.length) * 100}%`}}/>
     </div>
   );
 }
