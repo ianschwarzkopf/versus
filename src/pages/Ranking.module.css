@@ -84,6 +84,6 @@
 
 @media only screen and (max-width: 768px) {
   .ranking_selection {
-    grid-template-columns: 1fr 0.5fr 1fr;
+    grid-template-rows: 1fr 0.5fr 1fr;
   }
 }

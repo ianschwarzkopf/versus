@@ -40,6 +40,6 @@
 
 @media only screen and (max-width: 768px) {
   .results_container {
-    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr;
   }
 }

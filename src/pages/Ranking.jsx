@@ -7,10 +7,16 @@ import TrackCard from '../components/TrackCard';
 
 import styles from './Ranking.module.css';
 
-async function getSpotifyToken() {
-  const { data } = await supabase.auth.getSession();
-  return data?.session?.provider_token;
-}
+const getSpotifyToken = async () => {
+  if (!spotifyToken) {
+    const { data } = await supabase.auth.getSession();
+    const latestToken = data?.session?.provider_token;
+    setSpotifyToken(latestToken);
+    return latestToken;
+  }
+  return spotifyToken;
+};
+
 
 
 export default function Ranking() {
@@ -24,7 +30,7 @@ export default function Ranking() {
   const [history, setHistory] = useState([]);
   const [showResults, setShowResults] = useState(false);
 
-  const [token, setToken] = useState(null);
+  const [spotifyToken, setSpotifyToken] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
 
   const [volume, setVolume] = useState(0.5);
@@ -38,17 +44,18 @@ export default function Ranking() {
       const accessToken = data?.session?.provider_token;
       if (!accessToken) return;
 
-      setToken(accessToken);
+      setSpotifyToken(accessToken);
       const { device_id } = await loadSpotifyPlayer(accessToken);
       setDeviceId(device_id);
 
-      // Listen for token refresh events
+      // Stay up to date with token refresh
       const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'TOKEN_REFRESHED') {
-          console.log('Spotify token refreshed');
-          setToken(session.provider_token);
+        if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+          console.log('Updated Spotify token');
+          setSpotifyToken(session.provider_token);
         }
       });
+
       subscription = sub;
     }
 
@@ -60,6 +67,7 @@ export default function Ranking() {
   }, []);
 
 
+
   useEffect(() => {
     async function fetchTracks() {
       const accessToken = await getSpotifyToken();
@@ -69,7 +77,7 @@ export default function Ranking() {
 
       for (const albumId of albumIds) {
         const res = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          headers: { Authorization: `Bearer ${await getSpotifyToken()}` }
         });
 
         if (!res.ok) {
@@ -80,7 +88,7 @@ export default function Ranking() {
         const albumTracks = await res.json();
 
         const albumRes = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          headers: { Authorization: `Bearer ${await getSpotifyToken()}` }
         });
 
         const albumData = await albumRes.json();
