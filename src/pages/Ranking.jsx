@@ -199,7 +199,7 @@ export default function Ranking() {
     <div className={styles.ranking_container}>
       <h2>Choose the Better Track</h2>
       <div className={styles.ranking_selection}>
-        <TrackCard track={t1} token={await getSpotifyToken()} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
+        <TrackCard track={t1} token={spotifyToken} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
         <div className={styles.mid_buttons}>
           <button onClick={handleUndo}>Undo</button>
           <input
@@ -213,7 +213,7 @@ export default function Ranking() {
           />
           <button onClick={() => handleVote(0)}>Tie</button>
         </div>
-        <TrackCard track={t2} token={await getSpotifyToken()} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
+        <TrackCard track={t2} token={spotifyToken} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
       </div>
       <div className={styles.progressBar} style={{width: `${(currentIndex / matchups.length) * 100}%`}}/>
     </div>
