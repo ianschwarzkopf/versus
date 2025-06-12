@@ -6,21 +6,23 @@ import { loadSpotifyPlayer } from '../lib/spotifyPlayer';
 import TrackCard from '../components/TrackCard';
 
 import styles from './Ranking.module.css';
-const [spotifyToken, setSpotifyToken] = useState(null);
-
-const getSpotifyToken = async () => {
-  if (!spotifyToken) {
-    const { data } = await supabase.auth.getSession();
-    const latestToken = data?.session?.provider_token;
-    setSpotifyToken(latestToken);
-    return latestToken;
-  }
-  return spotifyToken;
-};
-
-
 
 export default function Ranking() {
+  const { state } = useLocation();
+  const albumIds = state?.albumIds || [];
+
+  const [spotifyToken, setSpotifyToken] = useState(null); // ✅ MOVE THIS INSIDE HERE
+
+  const getSpotifyToken = async () => {
+    if (!spotifyToken) {
+      const { data } = await supabase.auth.getSession();
+      const latestToken = data?.session?.provider_token;
+      setSpotifyToken(latestToken);
+      return latestToken;
+    }
+    return spotifyToken;
+  };
+
   const { state } = useLocation();
   const albumIds = state?.albumIds || [];
 
