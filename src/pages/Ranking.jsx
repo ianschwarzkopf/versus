@@ -6,6 +6,7 @@ import { loadSpotifyPlayer } from '../lib/spotifyPlayer';
 import TrackCard from '../components/TrackCard';
 
 import styles from './Ranking.module.css';
+const [spotifyToken, setSpotifyToken] = useState(null);
 
 const getSpotifyToken = async () => {
   if (!spotifyToken) {
@@ -30,7 +31,7 @@ export default function Ranking() {
   const [history, setHistory] = useState([]);
   const [showResults, setShowResults] = useState(false);
 
-  const [spotifyToken, setSpotifyToken] = useState(null);
+
   const [deviceId, setDeviceId] = useState(null);
 
   const [volume, setVolume] = useState(0.5);
@@ -198,7 +199,7 @@ export default function Ranking() {
     <div className={styles.ranking_container}>
       <h2>Choose the Better Track</h2>
       <div className={styles.ranking_selection}>
-        <TrackCard track={t1} token={token} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
+        <TrackCard track={t1} token={await getSpotifyToken()} deviceId={deviceId} onVote={handleVote} position={1} isActive={t1.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
         <div className={styles.mid_buttons}>
           <button onClick={handleUndo}>Undo</button>
           <input
@@ -212,7 +213,7 @@ export default function Ranking() {
           />
           <button onClick={() => handleVote(0)}>Tie</button>
         </div>
-        <TrackCard track={t2} token={token} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
+        <TrackCard track={t2} token={await getSpotifyToken()} deviceId={deviceId} onVote={handleVote} position={2} isActive={t2.id === currentlyPlayingId} setCurrentlyPlayingId={setCurrentlyPlayingId}/>
       </div>
       <div className={styles.progressBar} style={{width: `${(currentIndex / matchups.length) * 100}%`}}/>
     </div>
