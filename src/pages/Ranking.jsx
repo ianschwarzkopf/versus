@@ -12,20 +12,6 @@ export default function Ranking() {
   const albumIds = state?.albumIds || [];
 
   const [spotifyToken, setSpotifyToken] = useState(null); // ✅ MOVE THIS INSIDE HERE
-
-  const getSpotifyToken = async () => {
-    if (!spotifyToken) {
-      const { data } = await supabase.auth.getSession();
-      const latestToken = data?.session?.provider_token;
-      setSpotifyToken(latestToken);
-      return latestToken;
-    }
-    return spotifyToken;
-  };
-
-  const { state } = useLocation();
-  const albumIds = state?.albumIds || [];
-
   const [tracks, setTracks] = useState([]);
   const [matchups, setMatchups] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -38,6 +24,16 @@ export default function Ranking() {
 
   const [volume, setVolume] = useState(0.5);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState(null);
+
+  const getSpotifyToken = async () => {
+    if (!spotifyToken) {
+      const { data } = await supabase.auth.getSession();
+      const latestToken = data?.session?.provider_token;
+      setSpotifyToken(latestToken);
+      return latestToken;
+    }
+    return spotifyToken;
+  };
 
   useEffect(() => {
     let subscription;
