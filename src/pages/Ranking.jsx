@@ -11,7 +11,7 @@ export default function Ranking() {
   const { state } = useLocation();
   const albumIds = state?.albumIds || [];
 
-  const [spotifyToken, setSpotifyToken] = useState(null); // ✅ MOVE THIS INSIDE HERE
+  const [spotifyToken, setSpotifyToken] = useState(null);
   const [tracks, setTracks] = useState([]);
   const [matchups, setMatchups] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -177,14 +177,18 @@ export default function Ranking() {
 
     return (
       <div>
-        <h2>Ranking Results</h2>
-        <ul>
-          {sorted.map((t, i) => (
-            <li key={t.id}>
-              #{i + 1}: {t.name} ({t.albumName}) – {t.score}
-            </li>
-          ))}
-        </ul>
+        <div className={styles.ranking_container}>
+          <h2>Ranking Results</h2>
+          <div className={styles.ranking_selection}>
+            <ul>
+              {sorted.map((t, i) => (
+                <h3 key={t.id}>
+                  #{i + 1}: {t.name} ({t.albumName})
+                </h3>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     );
   }
