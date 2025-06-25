@@ -75,7 +75,7 @@ export default function Ranking() {
       const allTracks = [];
 
       for (const albumId of albumIds) {
-        const res = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+        const res = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks?limit=50`, {
           headers: { Authorization: `Bearer ${await getSpotifyToken()}` }
         });
 
