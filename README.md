@@ -3,6 +3,7 @@
 A song ranking website that utilizes the Spotify API.
 
 Currently in development (only usable by those with permission).
+Created HTML, CSS, JavaScript, and React
 
 - Search for artists to rank
 - Rank albums, playlists, songs
